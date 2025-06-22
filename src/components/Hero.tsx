@@ -1,11 +1,35 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
+import Settings from "@/components/Settings";
 
 const Hero = () => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
-    <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-20 px-4">
+    <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-20 px-4 relative">
+      {/* Кнопка настроек */}
+      <div className="absolute top-6 right-6">
+        <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+            >
+              <Icon name="Settings" size={16} className="mr-2" />
+              Настройки
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <Settings onClose={() => setIsSettingsOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      </div>
+
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
