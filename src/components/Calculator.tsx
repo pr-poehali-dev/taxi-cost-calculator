@@ -14,21 +14,47 @@ import Icon from "@/components/ui/icon";
 const Calculator = () => {
   const [distance, setDistance] = useState("");
   const [serviceType, setServiceType] = useState("");
+  const [waitingTime, setWaitingTime] = useState("");
   const [estimatedCost, setEstimatedCost] = useState(0);
+  const [breakdown, setBreakdown] = useState<{
+    base: number;
+    distance: number;
+    waiting: number;
+    total: number;
+  } | null>(null);
 
   const calculateCost = () => {
     if (!distance || !serviceType) return;
 
     const dist = parseFloat(distance);
-    let cost = 0;
+    const waiting = parseFloat(waitingTime) || 0;
+    let baseCost = 0;
+    let distanceCost = 0;
+    let waitingCost = 0;
 
     if (serviceType === "city") {
-      cost = 150 + dist * 25; // 150₽ посадка + 25₽/км
+      baseCost = 150; // Посадка
+      distanceCost = dist * 30; // 30₽/км для города
+      waitingCost = waiting * 3; // 3₽/мин ожидания
     } else if (serviceType === "intercity") {
-      cost = dist * 15; // 15₽/км
+      baseCost = 200; // Межгород посадка
+      distanceCost = dist * 18; // 18₽/км для межгорода
+      waitingCost = waiting * 5; // 5₽/мин ожидания
+    } else if (serviceType === "business") {
+      baseCost = 300; // Бизнес-класс
+      distanceCost = dist * 45; // 45₽/км
+      waitingCost = waiting * 8; // 8₽/мин ожидания
     }
 
-    setEstimatedCost(Math.round(cost));
+    const total = Math.round(baseCost + distanceCost + waitingCost);
+
+    setEstimatedCost(total);
+    setBreakdown({
+      base: baseCost,
+      distance: Math.round(distanceCost),
+      waiting: Math.round(waitingCost),
+      total,
+    });
   };
 
   return (
@@ -67,10 +93,13 @@ const Calculator = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="city">
-                        Городская (150₽ + 25₽/км)
+                        Городская (150₽ + 30₽/км)
                       </SelectItem>
                       <SelectItem value="intercity">
-                        Межгородняя (15₽/км)
+                        Межгородняя (200₽ + 18₽/км)
+                      </SelectItem>
+                      <SelectItem value="business">
+                        Бизнес-класс (300₽ + 45₽/км)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -89,6 +118,19 @@ const Calculator = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-slate-700">
+                    Время ожидания (мин)
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={waitingTime}
+                    onChange={(e) => setWaitingTime(e.target.value)}
+                    className="text-lg"
+                  />
+                </div>
+
                 <Button
                   onClick={calculateCost}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
@@ -100,7 +142,7 @@ const Calculator = () => {
               </div>
 
               <div className="flex items-center justify-center">
-                <div className="text-center p-8 bg-blue-50 rounded-lg w-full">
+                <div className="text-center p-6 bg-blue-50 rounded-lg w-full">
                   <Icon
                     name="Banknote"
                     size={48}
@@ -109,11 +151,36 @@ const Calculator = () => {
                   <div className="text-sm text-gray-600 mb-2">
                     Примерная стоимость:
                   </div>
-                  <div className="text-4xl font-bold text-blue-600">
+                  <div className="text-4xl font-bold text-blue-600 mb-4">
                     {estimatedCost > 0 ? `${estimatedCost}₽` : "—"}
                   </div>
+
+                  {breakdown && (
+                    <div className="space-y-1 text-sm text-gray-600 mb-4">
+                      <div className="flex justify-between">
+                        <span>Посадка:</span>
+                        <span>{breakdown.base}₽</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Поездка:</span>
+                        <span>{breakdown.distance}₽</span>
+                      </div>
+                      {breakdown.waiting > 0 && (
+                        <div className="flex justify-between">
+                          <span>Ожидание:</span>
+                          <span>{breakdown.waiting}₽</span>
+                        </div>
+                      )}
+                      <hr className="my-2" />
+                      <div className="flex justify-between font-semibold">
+                        <span>Итого:</span>
+                        <span>{breakdown.total}₽</span>
+                      </div>
+                    </div>
+                  )}
+
                   {estimatedCost > 0 && (
-                    <div className="text-sm text-gray-500 mt-2">
+                    <div className="text-xs text-gray-500">
                       * Итоговая стоимость может отличаться
                     </div>
                   )}

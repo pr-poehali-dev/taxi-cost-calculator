@@ -8,7 +8,11 @@ const Services = () => {
       icon: "Building2",
       title: "Городские поездки",
       description: "Быстрые поездки по городу с фиксированными тарифами",
-      features: ["От 150₽ за посадку", "Поминутная оплата", "Комфорт-класс"],
+      features: [
+        "150₽ посадка + 30₽/км",
+        "Время ожидания 3₽/мин",
+        "Комфорт-класс",
+      ],
       price: "от 150₽",
     },
     {
@@ -16,11 +20,22 @@ const Services = () => {
       title: "Межгородние перевозки",
       description: "Комфортные поездки в другие города и области",
       features: [
-        "Предварительная запись",
+        "200₽ посадка + 18₽/км",
         "Встреча с табличкой",
         "Багажное отделение",
       ],
-      price: "от 15₽/км",
+      price: "от 200₽",
+    },
+    {
+      icon: "Crown",
+      title: "Бизнес-класс",
+      description: "Премиум автомобили для деловых поездок",
+      features: [
+        "300₽ посадка + 45₽/км",
+        "Mercedes, BMW, Audi",
+        "Водитель в костюме",
+      ],
+      price: "от 300₽",
     },
   ];
 
@@ -36,7 +51,7 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <Card
               key={index}
